@@ -1,17 +1,17 @@
 import random
 
 class Card:
-    def __init__(self, name, suit, value):
-        self.name = name
+    def __init__(self, number, suit, suitname, id):
+        self.number = number
         self.suit = suit
-        self.value = value
+        self.suitname = suitname
         self.id = id
- 
+
     def print_card(self):
         lines = []
         lines.append("+---+")
         lines.append("|{}  |".format(self.suit))
-        lines.append("| {} |".format(self.name))
+        lines.append("| {} |".format(self.number))
         lines.append("|  {}|".format(self.suit))
         lines.append("+---+")
         return lines
@@ -20,82 +20,75 @@ class Deck:
     def __init__(self):
         self.cards = []
         self.cardsid = []
+        self.cardsnames = []
         self.reset()
  
     def reset(self):
         self.cards.clear()
-        values = [11, 10, 10, 10, 10, 9, 8, 7, 6, 5, 4, 3, 2]
-        names = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"]
+        numbers = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"]
         suits = ["♣", "♠", "♦", "♥"]
-        ids = ["C", "S", "D", "H"]
+        suitnames = ["Spades", "Clubs", "Diamonds", "Hearts"]
 
-        for i in range(len(values)):
+        for number in numbers:
             for suit in suits:
-                self.cards.append(Card(names[i], suit, values[i]))
-                self.cardsid.append(names[i] + ids[i % len(ids)])
- 
+                cardid =  str(number) + suitnames[suits.index(suit)].lower()[0] 
+                card = Card(number, suit, suitnames[suits.index(suit)], cardid)
+                self.cards.append(card)
+                self.cardsnames.append(number + suitnames[suits.index(suit)])
+                self.cardsid.append(cardid)
+
         self.shuffle()
  
     def shuffle(self):
         random.shuffle(self.cards)
  
     def draw(self):
-        card = self.cards.pop()
-        print(card)
-        return card
-
-    def print_deck(self):
-        for card in self.cards:
-            for line in card.print_card():
-                print(line)
+        if len(self.cards) > 0:
+            card = self.cards.pop()
+            name = self.cardsnames.pop()
+            card_id = self.cardsid.pop()
+            return name, card_id, card
+        else:
+            return None
 
 class Player:
     def __init__(self):
         self.hand = []
+        self.hand_names = []
         self.hand_id = []
     
     def draw_hand(self, deck):
-        for _ in range(2):
-            card = deck.draw()
-            self.hand.append(card)
-            self.hand_id.append(card.name + card.ids)
+        for i in range(2):
+            name, card_id, card = deck.draw()
+            if card is not None:
+                self.hand.append(card)
+                self.hand_names.append(name)
+                self.hand_id.append(card_id)
 
     def print_hand(self):
-        card_lines = [[] for _ in range(5)]
         for card in self.hand:
             lines = card.print_card()
-            for i, line in enumerate(lines):
-                card_lines[i].extend(line)
-
-        for line in card_lines:
-            print("  ".join(line))
-        print()
+            for line in lines:
+                print(line)
 
 class Flop:
     def __init__(self, deck):
         self.cards = []
         for _ in range(3):
-            card = deck.draw()
-            self.cards.append(card)
+            name, card_id, card = deck.draw()
+            if card is not None:
+                self.cards.append(card)
 
     def print_flop(self):
-        flop_lines = [[] for _ in range(5)]
         for card in self.cards:
             lines = card.print_card()
-            for i, line in enumerate(lines):
-                flop_lines[i].extend(line)
-
-        for line in flop_lines:
-            print("  ".join(line))
-        print()
+            for line in lines:
+                print(line)
+            print()
 
 deck = Deck()
 player = Player()
 player.draw_hand(deck)
 player.print_hand()
 print(player.hand_id)
-
 flop = Flop(deck)
-flop.print_flop()
-
-deck.print_deck()
