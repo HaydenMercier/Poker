@@ -1,2 +1,2 @@
 # Poker
-Poker with Python
+Poker with Python. Made to develop my OOP skills.
