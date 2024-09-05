@@ -1,0 +1,3 @@
+This is a WIP of Poker in Python.
+This currently requires the ```random``` python module.
+It can be ran in a terminal window using an IDE.
